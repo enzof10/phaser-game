@@ -1,3 +1,23 @@
+
+/*** @type {import("../types/phaser")} */
+let config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    physics: {
+        default: "arcade",
+        arcade: {
+            gravity: { y: 300 },
+            debug: false
+        }
+    },
+    scene: {
+        preload,
+        create,
+        update
+    },
+}
+var game = new Phaser.Game(config)
 function preload() {
     this.load.image("sky", "assets/sky.png")
     this.load.image("platform", "assets/platform.png")
@@ -12,21 +32,49 @@ function preload() {
 }
 function create() {
     this.add.image(400, 300, "sky")
-    this.add.image(400, 300, "platform")
-    this.add.image(200, 600, "dude")
-}
-const update = () => {
+    let platform = this.physics.add.staticGroup();
 
+    platform.create(400, 568, "platform").setScale(2).refreshBody()
+    platform.create(600, 400, "platform")
+    platform.create(50, 250, "platform")
+    platform.create(750, 220, "platform")
+
+    player = this.physics.add.sprite(100, 450, 'dude')
+    player.setCollideWorldBounds(true)
+    player.setBounce(0.2)
+
+    this.anims.create({
+        key: 'left',
+        frame: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+    })
+
+    this.anims.create({
+        key: 'turn',
+        frame: [{ key: 'dude', frame: 4 }],
+        frameRate: 20,
+    })
+
+
+    this.anims.create({
+        key: 'left',
+        frame: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    })
+
+    player.body.setGravityY(300)
+
+    this.physics.add.collider(platform, player)
+    
+
+    cursors = this.input.keyboard.createCursorKeys()
 }
-let config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    scene: {
-        preload,
-        create,
-        update
+function update() {
+    if(cursors.left.isDown){
+        console.log('cursors.left: ', cursors.left);
+        player.setVelocityX(-160)
     }
 }
 
-let game = new Phaser.Game(config)
