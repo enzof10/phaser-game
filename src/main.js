@@ -17,7 +17,10 @@ let config = {
         update
     },
 }
-var game = new Phaser.Game(config)
+
+let scoreText;
+let score = 0
+let game = new Phaser.Game(config)
 function preload() {
     this.load.image("sky", "assets/sky.png")
     this.load.image("platform", "assets/platform.png")
@@ -63,21 +66,29 @@ function create() {
         frameRate: 15,
         repeat: -1
     })
-    this.physics.add.collider( player, platform)
+    this.physics.add.collider(player, platform)
     cursors = this.input.keyboard.createCursorKeys()
 
-    starts = this.physics.add.group({
+    stars = this.physics.add.group({
         key: 'star',
         repeat: 11,
         setXY: { x: 12, y: 0, stepX: 70, stepY: Math.random() * 10 }
     })
-
-    starts.children.iterate(function (child) {
+    stars.children.iterate(function (child) {
         child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8))
     })
-    this.physics.add.collider(starts, platform)
+    this.physics.add.collider(stars, platform)
+    this.physics.add.overlap(stars, player, collectStar, null, true)
+
+    scoreText = this.add.text(16, 16, 'score: 0', {
+        fontSize: '32px',
+        fill: '#000',
+    })
 
 }
+
+
+
 function update() {
 
 
@@ -98,3 +109,9 @@ function update() {
 
 }
 
+function collectStar(player, star) {
+    star.disableBody(true, true)
+    score += 10
+    scoreText.setText('score: '+ score)
+
+}
