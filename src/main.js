@@ -63,28 +63,36 @@ function create() {
         frameRate: 15,
         repeat: -1
     })
-
-    // player.body.setGravityY(300)
-
-    this.physics.add.collider(platform, player)
-    
-
+    this.physics.add.collider( player, platform)
     cursors = this.input.keyboard.createCursorKeys()
+
+    starts = this.physics.add.group({
+        key: 'star',
+        repeat: 11,
+        setXY: { x: 12, y: 0, stepX: 70, stepY: Math.random() * 10 }
+    })
+
+    starts.children.iterate(function (child) {
+        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8))
+    })
+    this.physics.add.collider(starts, platform)
+
 }
 function update() {
 
-    if(cursors.left.isDown){
+
+    if (cursors.left.isDown) {
         player.setVelocityX(-160)
         player.anims.play('left', true)
-    }else if(cursors.right.isDown){
+    } else if (cursors.right.isDown) {
         player.setVelocityX(160)
         player.anims.play('right', true)
-    }else{
+    } else {
         player.setVelocityX(0)
         player.anims.play('turn', true)
     }
 
-    if(cursors.up.isDown && player.body.touching.down){
+    if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-330)
     }
 
